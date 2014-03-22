@@ -51,9 +51,25 @@ $(document).ready(function() {
             });
             this.render();
         },
+        render: function() {
+
+            var template = _.template(this.template);
+            this.$el.html(template);
+            this.svg = Snap('svg');
+            this.createIcon({x: 35,
+                y: 80,
+                id: 0});
+            this.createIcon({x: 55,
+                y: 130,
+                id: 1});
+            this.createIcon({x: 155,
+                y: 30,
+                id: 2});
+
+        },            
         events: {
-            'click circle': 'animateView',
-            'click polygon': 'runAnimation'
+         //   'click circle': 'animateView',
+          //  'click polygon': 'runAnimation'
         },
         // create diamond-circle icons
         createIcon: function(center) {
@@ -66,7 +82,7 @@ $(document).ready(function() {
             ];
 
             // base circle
-            this.svg.circle(center.x, center.y, 15).attr({
+            var x = this.svg.circle(center.x, center.y, 15).attr({
                 fill: '#ffffff',
                 stroke: '#fc6315',
                 strokeWidth: 1,
@@ -74,9 +90,19 @@ $(document).ready(function() {
             });
 
             // diamond shape
-            this.svg.polygon(polyCoords).attr({
+            var y = this.svg.polygon(polyCoords).attr({
                 fill: '#fc6315',
                 'data-feature-id': center.id
+            });
+            
+            var that = this;
+            x.click(function() {
+                that.runAnimation(center);
+                
+            });
+                        y.click(function() {
+                that.runAnimation(center);
+                
             });
 
         },
@@ -87,10 +113,10 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-            var startcoords = {x: 50,
+            var startcoords = coords || {x: 50,
                 y: 50};
-            console.log(startcoords)
-            path = this.svg.path('M' + startcoords.x + ',' + startcoords.y + ' L150 280 150 50 450 50').attr(lineAttr),
+            console.log(startcoords);
+            var path = this.svg.path('M' + startcoords.x + ',' + startcoords.y + ' L' + (startcoords.x + 50) + ' ' + (startcoords.y + 0) + ' ' + (startcoords.x + 50) + ' ' +  (startcoords.y + 50) + ' ' + (startcoords.x + 250) + ' ' + (startcoords.y + 50)).attr(lineAttr),                
                 len = path.getTotalLength(),
                 circle = this.svg.circle(350, 87.5, 7).attr({
                 fill: '#fc6315'
@@ -110,22 +136,6 @@ $(document).ready(function() {
                 tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
 
             }, 400, mina.ease);
-        },
-        render: function() {
-
-            var template = _.template(this.template);
-            this.$el.html(template);
-            this.svg = Snap('svg');
-            this.createIcon({x: 35,
-                y: 80,
-                id: 0});
-            this.createIcon({x: 55,
-                y: 130,
-                id: 1});
-            this.createIcon({x: 155,
-                y: 30,
-                id: 2});
-
         }
     });
 
@@ -216,7 +226,7 @@ $(document).ready(function() {
                 tri.remove();
             });
         } else {
-            runAnimation({x: 20,
+            runAnimation({x: 60,
                 y: 20});
         }
     });
