@@ -114,10 +114,18 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-               $('path').next().add('path').fadeOut(500);
+            $('path').next().add('path').fadeOut(500);
             // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
-            
+            var lineAttr = {
+                fill: 'none',
+                stroke: '#fc6315',
+                strokeWidth: 5,
+                strokeLinecap: 'round',
+                strikeLinejoin: 'round'
+            };
+
+
             // a simple grid function for path values
             function grid(input, multiplier) {
                 return input + (gridUnit * multiplier);
@@ -178,18 +186,6 @@ $(document).ready(function() {
 
     /********************* START PROGRAM *****************************/
 
-    // svg stuff
-    var canvas = Snap('svg');
-    var path;
-    var lineAttr = {
-        fill: 'none',
-        stroke: '#fc6315',
-        strokeWidth: 5,
-        strokeLinecap: 'round',
-        strikeLinejoin: 'round'
-    };
-
-
     var app = {};
 
     /* Render views */
@@ -202,6 +198,13 @@ $(document).ready(function() {
 
     /*  Refactor this code to use in the PrinterDetailView, mostly just the path retraction */
     function runAnimation(startcoords) {
+        var lineAttr = {
+            fill: 'none',
+            stroke: '#fc6315',
+            strokeWidth: 5,
+            strokeLinecap: 'round',
+            strikeLinejoin: 'round'
+        };
         var canvas = Snap('svg');
         var path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L' + (startcoords.x + 50) + ' ' + (startcoords.y + 0) + ' ' + (startcoords.x + 50) + ' ' + (startcoords.y + 50) + ' ' + (startcoords.x + 250) + ' ' + (startcoords.y + 50)).attr(lineAttr),
             len = path.getTotalLength(),
