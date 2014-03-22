@@ -49,63 +49,82 @@ $(document).ready(function() {
                 model: this.model,
                 featureId: 0
             });
-            this.render()
-
+            this.render();
         },
         events: {
-            'click circle': 'animateView'
+            'click circle': 'animateView',
+            'click polygon': 'runAnimation'
         },
-        createIcon: function(a, b, c, d, cx, cy) {
-            console.log(arguments)
-            var canvas = Snap('svg');
-            var diamondCircle = canvas.circle(cx, cy, 15).attr({
-                fill: '#ffffff',
-                stroke: '#fc6315',
-                strokeWidth: 1
-            });
-            
-            
-            var diamond = canvas.polygon([a, b, c, d]).attr({
-                fill: '#fc6315'
-            });
-        },
-        makeIcon: function(center) {
-            console.log(arguments)
-            var canvas = Snap('svg');
-            var diamondCircle = canvas.circle(center.x, center.y, 15).attr({
-                fill: '#000',
-                stroke: '#fc6315',
-                strokeWidth: 1
-            });
-            
+        // create diamond-circle icons
+        createIcon: function(center) {
+            // coordinates for diamond shape
             var polyCoords = [
-                (center.x+ ',' + (center.y - 10)),
+                (center.x + ',' + (center.y - 10)),
                 ((center.x + 10) + ',' + (center.y)),
                 (center.x + ',' + (center.y + 10)),
-                ((center.x - 10)+ ',' + (center.y))
+                ((center.x - 10) + ',' + (center.y))
             ];
-            
-            console.log('polyCoords', polyCoords)
-            var diamond = canvas.polygon(polyCoords).attr({
-                fill: '#ff0'
+
+            // base circle
+            this.svg.circle(center.x, center.y, 15).attr({
+                fill: '#ffffff',
+                stroke: '#fc6315',
+                strokeWidth: 1,
+                'data-feature-id': center.id
             });
-        },            
+
+            // diamond shape
+            this.svg.polygon(polyCoords).attr({
+                fill: '#fc6315',
+                'data-feature-id': center.id
+            });
+
+        },
         animateView: function(e) {
+            // re-render with a different feature object
             var target = $(e.currentTarget).data('feature-id');
             this.descriptionView.featureId = target;
             this.descriptionView.render();
+        },
+        runAnimation: function(coords) {
+            var startcoords = {x: 20,
+                y: 30};
+            console.log(startcoords)
+            path = this.svg.path('M' + startcoords.x + ',' + startcoords.y + ' L150 280 150 50 450 50').attr(lineAttr),
+                len = path.getTotalLength(),
+                circle = this.svg.circle(350, 87.5, 7).attr({
+                fill: '#fc6315'
+            }),
+            tri = this.svg.g(circle);
+
+            path.attr({
+                fill: 'none',
+                "stroke-dasharray": len + " " + len,
+                "stroke-dashoffset": len
+            }).animate({
+                "stroke-dashoffset": 0
+            },
+            400, mina.ease);
+            Snap.animate(0, len, function(value) {
+                var movePoint = path.getPointAtLength(value);
+                tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
+
+            }, 400, mina.ease);
         },
         render: function() {
 
             var template = _.template(this.template);
             this.$el.html(template);
-            
-            // convert this into a math function
-            //this.createIcon('35,70', '45,80', '35,90', '25,80', 35, 80);
-            //this.createIcon('135,70', '145,80', '135,90', '125,80', 85, 150);
-            //this.createIcon('75,70', '85,80', '75,90', '65,80'], 135, 20);
-            this.makeIcon({x: 35, y:80 });
-            this.makeIcon({x: 55, y:130 });
+            this.svg = Snap('svg');
+            this.createIcon({x: 35,
+                y: 80,
+                id: 0});
+            this.createIcon({x: 55,
+                y: 130,
+                id: 1});
+            this.createIcon({x: 155,
+                y: 30,
+                id: 2});
 
         }
     });
@@ -127,7 +146,7 @@ $(document).ready(function() {
             var template = _.template(this.template, {
                 text: templateData[this.featureId]
             });
-            this.$el.fadeOut(1000).html(template).fadeIn(500);
+            this.$el.hide().html(template).fadeIn(500);
         }
     });
 
@@ -151,10 +170,8 @@ $(document).ready(function() {
     });
 
     function runAnimation(startcoords) {
-
-
         var canvas = Snap('svg');
-        var path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L150 280 150 50 450 50').attr(lineAttr),
+        path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L150 60 150 50 280 50').attr(lineAttr),
             len = path.getTotalLength(),
             circle = canvas.circle(350, 87.5, 7).attr({
             fill: '#fc6315'
@@ -172,7 +189,7 @@ $(document).ready(function() {
         Snap.animate(0, len, function(value) {
             var movePoint = path.getPointAtLength(value);
             tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
-            console.log(value);
+
         }, 400, mina.ease);
     }
 
@@ -190,14 +207,14 @@ $(document).ready(function() {
             Snap.animate(len, 0, function(value) {
                 var movePoint = path.getPointAtLength(value);
                 tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
-                console.log(value);
+
             }, 400, mina.ease, function() {
                 path.remove();
                 tri.remove();
             });
         } else {
-            runAnimation({x: 0,
-                y: 0});
+            runAnimation({x: 20,
+                y: 20});
         }
     });
 

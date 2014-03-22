@@ -9,6 +9,12 @@ and open the template in the editor.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <style>
+
+            #printerImage {
+                background: url("http://www.graphicproducts.com/images/label-printers/duralabel-lobo/main/duralabel-lobo.png");                
+
+            }
+
             #nodesViewLayer {
                 width: 550px;
                 height: 180px;
@@ -34,19 +40,14 @@ and open the template in the editor.
         </style>
     </head>
     <body>
+
         <script type="text/template" id="descriptionViewTemplate">
             <label><%= text.id %> <%= text.title %> </label>
 
             <p><%= text.description %></p>
         </script>
         <script type="text/template" id="printerDetailViewTemplate">
-            <div> <img id="printerImage"
-            src="http://www.graphicproducts.com/images/label-printers/duralabel-lobo/main/duralabel-lobo.png" /> <svg id="nodesViewLayer"> 
-            <circle data-feature-id="0" cx="35" cy="50" r="5" stroke="#0f0" stroke-width="3" fill="#070" />
-            <circle data-feature-id="1" cx="135" cy="45" r="5" stroke="#0f0" stroke-width="3" fill="#070" />
-            <circle data-feature-id="2" cx="225" cy="134" r="5" stroke="#0f0" stroke-width="3" fill="#070" />        
-
-            </svg>
+            <div> <div id="printerImage"></div> <svg id="nodesViewLayer"></svg>
             </div>
         </script>
 
