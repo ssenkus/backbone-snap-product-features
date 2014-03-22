@@ -114,7 +114,7 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-        
+               $('path').next().add('path').fadeOut(500);
             // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
             
@@ -147,7 +147,7 @@ $(document).ready(function() {
                 var movePoint = path.getPointAtLength(value);
                 tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
 
-            }, 5000, mina.ease, function() {
+            }, 200, mina.ease, function() {
                 def.resolve();
 
             });
