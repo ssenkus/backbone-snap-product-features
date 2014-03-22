@@ -88,13 +88,11 @@ $(document).ready(function() {
                 fill: '#ffffff',
                 stroke: '#fc6315',
                 strokeWidth: 1,
-                'data-feature-id': center.id
             });
 
             // diamond shape
             var y = this.svg.polygon(polyCoords).attr({
                 fill: '#fc6315',
-                'data-feature-id': center.id
             });
             var circleDiamond = this.svg.g(x, y).attr({
                 'data-feature-id': center.id
@@ -106,9 +104,6 @@ $(document).ready(function() {
                 });
             
             });
-
-
-
         },
         animateView: function(featureId) {
             
