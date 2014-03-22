@@ -87,8 +87,8 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-            var startcoords = {x: 20,
-                y: 30};
+            var startcoords = {x: 50,
+                y: 50};
             console.log(startcoords)
             path = this.svg.path('M' + startcoords.x + ',' + startcoords.y + ' L150 280 150 50 450 50').attr(lineAttr),
                 len = path.getTotalLength(),
@@ -163,15 +163,18 @@ $(document).ready(function() {
         strikeLinejoin: 'round'
     };
 
+
+    var app = {};
+
     /* Render views */
-    var printerDetailView = new PrinterDetailView({
+    app.printerDetailView = new PrinterDetailView({
         el: $('#printerDetailView'),
         model: new Printer()
     });
 
     function runAnimation(startcoords) {
         var canvas = Snap('svg');
-        path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L150 60 150 50 280 50').attr(lineAttr),
+        path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L' + (startcoords.x + 50) + ' ' + (startcoords.y + 0) + ' ' + (startcoords.x + 50) + ' ' +  (startcoords.y + 50) + ' ' + (startcoords.x + 250) + ' ' + (startcoords.y + 50)).attr(lineAttr),
             len = path.getTotalLength(),
             circle = canvas.circle(350, 87.5, 7).attr({
             fill: '#fc6315'
