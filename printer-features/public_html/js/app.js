@@ -96,17 +96,16 @@ $(document).ready(function() {
             });
             var circleDiamond = this.svg.g(x, y).attr({
                 'data-feature-id': center.id
-                
+
             });
             circleDiamond.click(function() {
                 $.when(that.runAnimation(center)).then(function() {
                     that.animateView(circleDiamond.attr('data-feature-id'))
                 });
-            
             });
         },
         animateView: function(featureId) {
-            
+
             // re-render with a different feature object
             //var target = $(e.currentTarget).data('feature-id');
             var target = featureId;
@@ -115,20 +114,24 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
+        
+            // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
+            
+            // a simple grid function for path values
             function grid(input, multiplier) {
                 return input + (gridUnit * multiplier);
-            }        
-        
+            }
+
             var x = coords.x;
             var y = coords.y;
-            var gridUnit = 5;
+            var gridUnit = 4;
             var pathData = 'M' + grid(x, 0) + ',' + grid(y, 0) + ' L' + grid(x, 5) + ' ' + grid(y, 0) + ' ' + grid(x, 5) + ' ' + grid(y, 5) + ' ' + 250 + ' ' + grid(y, 5)
             console.log(pathData);
             var path = this.svg.path(pathData).attr(lineAttr),
                 len = path.getTotalLength(),
                 circle = this.svg.circle(350, 87.5, 7).attr({
-                fill: '#fc6315'
+                fill: '#000'
             }),
             tri = this.svg.g(circle);
 
@@ -139,14 +142,14 @@ $(document).ready(function() {
             }).animate({
                 "stroke-dashoffset": 0
             },
-            400, mina.ease);
+            200, mina.ease);
             Snap.animate(0, len, function(value) {
                 var movePoint = path.getPointAtLength(value);
                 tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
-                
-            }, 400, mina.ease, function() {
+
+            }, 5000, mina.ease, function() {
                 def.resolve();
-                
+
             });
             return def.promise();
         }
@@ -195,33 +198,41 @@ $(document).ready(function() {
         model: new Printer()
     });
 
+
+
+    /*  Refactor this code to use in the PrinterDetailView, mostly just the path retraction */
     function runAnimation(startcoords) {
         var canvas = Snap('svg');
-        path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L' + (startcoords.x + 50) + ' ' + (startcoords.y + 0) + ' ' + (startcoords.x + 50) + ' ' + (startcoords.y + 50) + ' ' + (startcoords.x + 250) + ' ' + (startcoords.y + 50)).attr(lineAttr),
+        var path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L' + (startcoords.x + 50) + ' ' + (startcoords.y + 0) + ' ' + (startcoords.x + 50) + ' ' + (startcoords.y + 50) + ' ' + (startcoords.x + 250) + ' ' + (startcoords.y + 50)).attr(lineAttr),
             len = path.getTotalLength(),
             circle = canvas.circle(350, 87.5, 7).attr({
-            fill: '#fc6315'
+            fill: '#000'
         }),
         tri = canvas.g(circle);
 
         path.attr({
             fill: 'none',
             "stroke-dasharray": len + " " + len,
-            "stroke-dashoffset": len
+            "stroke-dashoffset": len,
+            'data-vis': true
         }).animate({
             "stroke-dashoffset": 0
         },
-        400, mina.ease);
+        400, mina.easeinout);
         Snap.animate(0, len, function(value) {
             var movePoint = path.getPointAtLength(value);
             tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
 
-        }, 400, mina.ease);
+        }, 400, mina.easeinout, function() {
+            path.attr({'data-vis': false})
+        });
     }
 
     $('#item1').on('click', function() {
 
-        if ($('path').length > 0) {
+        var len = 10;
+        console.log($('path').attr('vis'))
+        if ($('path').attr('data-vis') == true) {
             path.attr({
                 fill: 'none',
                 "stroke-dasharray": len + " " + len,
@@ -229,18 +240,18 @@ $(document).ready(function() {
             }).animate({
                 "stroke-dashoffset": len
             },
-            400, mina.ease);
+            1400, mina.easeinout);
             Snap.animate(len, 0, function(value) {
                 var movePoint = path.getPointAtLength(value);
                 tri.transform('t' + parseInt(movePoint.x - 350.4, 10) + ',' + parseInt(movePoint.y - 87, 10) + 'r ' + parseInt(195 + movePoint.alpha, 10));
 
-            }, 400, mina.ease, function() {
+            }, 1400, mina.easein, function() {
                 path.remove();
                 tri.remove();
             });
         } else {
-            runAnimation({x: 60,
-                y: 20});
+            runAnimation({x: 0,
+                y: 0});
         }
     });
 
