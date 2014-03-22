@@ -55,33 +55,58 @@ $(document).ready(function() {
         events: {
             'click circle': 'animateView'
         },
-        createIcon: function(a,b,c,d) {
-            console.log(this)
+        createIcon: function(a, b, c, d, cx, cy) {
+            console.log(arguments)
             var canvas = Snap('svg');
-            var diamondCircle = canvas.circle(35, 80, 15).attr({
+            var diamondCircle = canvas.circle(cx, cy, 15).attr({
                 fill: '#ffffff',
                 stroke: '#fc6315',
                 strokeWidth: 1
             });
-            var diamond = canvas.polygon([a, b,c,d]).attr({
+            
+            
+            var diamond = canvas.polygon([a, b, c, d]).attr({
                 fill: '#fc6315'
             });
         },
+        makeIcon: function(center) {
+            console.log(arguments)
+            var canvas = Snap('svg');
+            var diamondCircle = canvas.circle(center.x, center.y, 15).attr({
+                fill: '#000',
+                stroke: '#fc6315',
+                strokeWidth: 1
+            });
+            
+            var polyCoords = [
+                (center.x+ ',' + (center.y - 10)),
+                ((center.x + 10) + ',' + (center.y)),
+                (center.x + ',' + (center.y + 10)),
+                ((center.x - 10)+ ',' + (center.y))
+            ];
+            
+            console.log('polyCoords', polyCoords)
+            var diamond = canvas.polygon(polyCoords).attr({
+                fill: '#ff0'
+            });
+        },            
         animateView: function(e) {
             var target = $(e.currentTarget).data('feature-id');
             this.descriptionView.featureId = target;
-            
-            
-
-            this.descriptionView.render()
+            this.descriptionView.render();
         },
         render: function() {
 
-            var template = _.template(this.template, {
-            });
+            var template = _.template(this.template);
             this.$el.html(template);
-            this.createIcon('35,70','45,80', '35,90', '25,80');
-            //this.createIcon('25,10','45,80', '35,90', '25,80');
+            
+            // convert this into a math function
+            //this.createIcon('35,70', '45,80', '35,90', '25,80', 35, 80);
+            //this.createIcon('135,70', '145,80', '135,90', '125,80', 85, 150);
+            //this.createIcon('75,70', '85,80', '75,90', '65,80'], 135, 20);
+            this.makeIcon({x: 35, y:80 });
+            this.makeIcon({x: 55, y:130 });
+
         }
     });
 
@@ -102,7 +127,7 @@ $(document).ready(function() {
             var template = _.template(this.template, {
                 text: templateData[this.featureId]
             });
-            this.$el.hide().html(template).fadeIn(500);
+            this.$el.fadeOut(1000).html(template).fadeIn(500);
         }
     });
 
@@ -126,8 +151,8 @@ $(document).ready(function() {
     });
 
     function runAnimation(startcoords) {
-        
-        
+
+
         var canvas = Snap('svg');
         var path = canvas.path('M' + startcoords.x + ',' + startcoords.y + ' L150 280 150 50 450 50').attr(lineAttr),
             len = path.getTotalLength(),
@@ -152,7 +177,7 @@ $(document).ready(function() {
     }
 
     $('#item1').on('click', function() {
-        
+
         if ($('path').length > 0) {
             path.attr({
                 fill: 'none',
