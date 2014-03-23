@@ -22,7 +22,7 @@ $(document).ready(function() {
                     icon: {
                         x: 125,
                         y: 90
-                    }                    
+                    }
 
                 }, {
                     id: 2,
@@ -31,7 +31,7 @@ $(document).ready(function() {
                     icon: {
                         x: 25,
                         y: 100
-                    }                    
+                    }
                 }]
         }
     });
@@ -68,29 +68,12 @@ $(document).ready(function() {
             var template = _.template(this.template);
             this.$el.html(template);
             this.svg = Snap('svg');
-/*            this.createIcon({x: 35,
-                y: 80,
-                id: 0});
-            this.createIcon({x: 55,
-                y: 130,
-                id: 1});
-            this.createIcon({x: 155,
-                y: 30,
-                id: 2});
-            this.createIcon({x: 25,
-                y: 30,
-                id: 2});
-  */          
-            console.log(this.model.get('features'))
             _.each(this.model.get('features'), function(feature) {
-                    that.createIcon(feature)
-        });
+                that.createIcon(feature)
+            });
 
         },
-        events: {
-            //   'click circle': 'animateView',
-            //  'click polygon': 'runAnimation'
-        },
+        events: {},
         // create diamond-circle icons
         createIcon: function(feature) {
             var that = this;
@@ -104,14 +87,14 @@ $(document).ready(function() {
             ];
 
             // base circle
-            var x = this.svg.circle(feature.icon.x, feature.icon.y, 15).attr({
+            var circle = this.svg.circle(feature.icon.x, feature.icon.y, 15).attr({
                 fill: '#ffffff',
                 stroke: '#fc6315',
                 strokeWidth: 1
             });
 
             // diamond shape
-            var y = this.svg.polygon(polyCoords).attr({
+            var diamond = this.svg.polygon(polyCoords).attr({
                 fill: '#fc6315'
             });
             var circleDiamond = this.svg.g(x, y).attr({
@@ -120,7 +103,7 @@ $(document).ready(function() {
             });
             circleDiamond.click(function() {
                 $.when(that.runAnimation(feature.icon)).then(function() {
-                    that.animateView(circleDiamond.attr('data-feature-id'))
+                    that.animateView(circleDiamond.attr('data-feature-id'));
                 });
             });
         },
@@ -136,11 +119,11 @@ $(document).ready(function() {
             // a simple grid function for path values
             function grid(input, multiplier) {
                 return input + (gridUnit * multiplier);
-            }            
+            }
 
             // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
-            
+
             var lineAttr = {
                 fill: 'none',
                 stroke: '#fc6315',
@@ -152,20 +135,20 @@ $(document).ready(function() {
             var x = coords.x;
             var y = coords.y;
             var gridUnit = 4;
-            
+
             // not the best way to do things, but works for now for a controllable path
             var pathData = 'M' + grid(x, 0) + ',' + grid(y, 0) + ' L' + grid(x, 5) + ' ' + grid(y, 0) + ' ' + grid(x, 5) + ' ' + grid(y, 5) + ' ' + 250 + ' ' + grid(y, 5);
             var path, len, circle, tri;
-           
-            
+
+
             // this is a kludge fix, do better next time!
             $('path').next().add('path').fadeOut(200, function() {
                 this.remove();
             });
-            
+
             path = this.svg.path(pathData).attr(lineAttr);
-                len = path.getTotalLength();
-                circle = this.svg.circle(350, 87.5, 7).attr({
+            len = path.getTotalLength();
+            circle = this.svg.circle(350, 87.5, 7).attr({
                 fill: '#000'
             });
             tri = this.svg.g(circle);
