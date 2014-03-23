@@ -97,7 +97,7 @@ $(document).ready(function() {
             var diamond = this.svg.polygon(polyCoords).attr({
                 fill: '#fc6315'
             });
-            var circleDiamond = this.svg.g(x, y).attr({
+            var circleDiamond = this.svg.g(circle, diamond).attr({
                 'data-feature-id': feature.id
 
             });
