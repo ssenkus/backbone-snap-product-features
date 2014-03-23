@@ -127,20 +127,20 @@ $(document).ready(function() {
         animateView: function(featureId) {
 
             // re-render with a different feature object
-            //var target = $(e.currentTarget).data('feature-id');
             var target = featureId;
-            console.log(target)
             this.descriptionView.featureId = target;
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-        
-            // this is a kludge fix, do better next time!
-            $('path').next().add('path').fadeOut(200).remove();
-            
-            
+
+            // a simple grid function for path values
+            function grid(input, multiplier) {
+                return input + (gridUnit * multiplier);
+            }            
+
             // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
+            
             var lineAttr = {
                 fill: 'none',
                 stroke: '#fc6315',
@@ -149,22 +149,25 @@ $(document).ready(function() {
                 strikeLinejoin: 'round'
             };
 
-
-            // a simple grid function for path values
-            function grid(input, multiplier) {
-                return input + (gridUnit * multiplier);
-            }
-
             var x = coords.x;
             var y = coords.y;
             var gridUnit = 4;
-            var pathData = 'M' + grid(x, 0) + ',' + grid(y, 0) + ' L' + grid(x, 5) + ' ' + grid(y, 0) + ' ' + grid(x, 5) + ' ' + grid(y, 5) + ' ' + 250 + ' ' + grid(y, 5)
-            console.log(pathData);
-            var path = this.svg.path(pathData).attr(lineAttr),
-                len = path.getTotalLength(),
+            
+            // not the best way to do things, but works for now for a controllable path
+            var pathData = 'M' + grid(x, 0) + ',' + grid(y, 0) + ' L' + grid(x, 5) + ' ' + grid(y, 0) + ' ' + grid(x, 5) + ' ' + grid(y, 5) + ' ' + 250 + ' ' + grid(y, 5);
+            var path, len, circle, tri;
+           
+            
+            // this is a kludge fix, do better next time!
+            $('path').next().add('path').fadeOut(200, function() {
+                this.remove();
+            });
+            
+            path = this.svg.path(pathData).attr(lineAttr);
+                len = path.getTotalLength();
                 circle = this.svg.circle(350, 87.5, 7).attr({
                 fill: '#000'
-            }),
+            });
             tri = this.svg.g(circle);
 
             path.attr({
@@ -190,7 +193,7 @@ $(document).ready(function() {
     /* DescriptionView
      * 
      * - the view containing the title and description of the printer feature
-     * 
+     * - doesn't do much, more of a dummy subview
      * */
 
     var DescriptionView = Backbone.View.extend({
