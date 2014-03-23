@@ -10,16 +10,28 @@ $(document).ready(function() {
             features: [{
                     id: 0,
                     title: 'Large Labels',
-                    description: 'From 4” – 9” width, print signs and large labels at any length. Bold 300 dpi HD print resolution means you can go ahead and print that billboard. '
+                    description: 'From 4” – 9” width, print signs and large labels at any length. Bold 300 dpi HD print resolution means you can go ahead and print that billboard. ',
+                    icon: {
+                        x: 25,
+                        y: 30
+                    }
                 }, {
                     id: 1,
                     title: 'Harsh Environments',
-                    description: 'Tough tested vinyl supply will withstand the most extreme outdoor environments on the planet. From -300⁰F to 300⁰F degrees, chemical exposures, to wet, dirty or oily surfaces—your signs and labels will hold up. '
+                    description: 'Tough tested vinyl supply will withstand the most extreme outdoor environments on the planet. From -300⁰F to 300⁰F degrees, chemical exposures, to wet, dirty or oily surfaces—your signs and labels will hold up. ',
+                    icon: {
+                        x: 125,
+                        y: 90
+                    }                    
 
                 }, {
                     id: 2,
                     title: 'Go Network Free with the PS',
-                    description: 'Use the 10” touchscreen, seated in an ergonomically adjustable bracket on the PS model for a standalone workstation. Network independence allows you to print on demand from the plant to the warehouse.'
+                    description: 'Use the 10” touchscreen, seated in an ergonomically adjustable bracket on the PS model for a standalone workstation. Network independence allows you to print on demand from the plant to the warehouse.',
+                    icon: {
+                        x: 25,
+                        y: 100
+                    }                    
                 }]
         }
     });
@@ -52,11 +64,11 @@ $(document).ready(function() {
             this.render();
         },
         render: function() {
-
+            var that = this;
             var template = _.template(this.template);
             this.$el.html(template);
             this.svg = Snap('svg');
-            this.createIcon({x: 35,
+/*            this.createIcon({x: 35,
                 y: 80,
                 id: 0});
             this.createIcon({x: 55,
@@ -65,6 +77,14 @@ $(document).ready(function() {
             this.createIcon({x: 155,
                 y: 30,
                 id: 2});
+            this.createIcon({x: 25,
+                y: 30,
+                id: 2});
+  */          
+            console.log(this.model.get('features'))
+            _.each(this.model.get('features'), function(feature) {
+                    that.createIcon(feature)
+        });
 
         },
         events: {
@@ -72,34 +92,34 @@ $(document).ready(function() {
             //  'click polygon': 'runAnimation'
         },
         // create diamond-circle icons
-        createIcon: function(center) {
+        createIcon: function(feature) {
             var that = this;
-
+            console.log(this)
             // coordinates for diamond shape
             var polyCoords = [
-                (center.x + ',' + (center.y - 10)),
-                ((center.x + 10) + ',' + (center.y)),
-                (center.x + ',' + (center.y + 10)),
-                ((center.x - 10) + ',' + (center.y))
+                (feature.icon.x + ',' + (feature.icon.y - 10)),
+                ((feature.icon.x + 10) + ',' + (feature.icon.y)),
+                (feature.icon.x + ',' + (feature.icon.y + 10)),
+                ((feature.icon.x - 10) + ',' + (feature.icon.y))
             ];
 
             // base circle
-            var x = this.svg.circle(center.x, center.y, 15).attr({
+            var x = this.svg.circle(feature.icon.x, feature.icon.y, 15).attr({
                 fill: '#ffffff',
                 stroke: '#fc6315',
-                strokeWidth: 1,
+                strokeWidth: 1
             });
 
             // diamond shape
             var y = this.svg.polygon(polyCoords).attr({
-                fill: '#fc6315',
+                fill: '#fc6315'
             });
             var circleDiamond = this.svg.g(x, y).attr({
-                'data-feature-id': center.id
+                'data-feature-id': feature.id
 
             });
             circleDiamond.click(function() {
-                $.when(that.runAnimation(center)).then(function() {
+                $.when(that.runAnimation(feature.icon)).then(function() {
                     that.animateView(circleDiamond.attr('data-feature-id'))
                 });
             });
@@ -114,7 +134,11 @@ $(document).ready(function() {
             this.descriptionView.render();
         },
         runAnimation: function(coords) {
-            $('path').next().add('path').fadeOut(500);
+        
+            // this is a kludge fix, do better next time!
+            $('path').next().add('path').fadeOut(200).remove();
+            
+            
             // using a deferred object to coordinate animation sequence/view rendering
             var def = new $.Deferred();
             var lineAttr = {
